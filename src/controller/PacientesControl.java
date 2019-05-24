@@ -46,7 +46,8 @@ public class PacientesControl {
 	public static ArrayList<String[]> resgatarPacienteTotal(int id) {
 		PacientesDAO pdao = new PacientesDAO();
 		ArrayList<String[]> pacientes = pdao.readTotal(id);
-		return pacientes;		
+		return pacientes;
+		//
 	}
 	
 }
