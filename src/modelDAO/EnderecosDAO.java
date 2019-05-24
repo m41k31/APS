@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import connection.ConnectionFactory;
 import model.Enderecos;
+import model.Pacientes;
 import model.Pessoa;;
 
 public class EnderecosDAO {
@@ -75,6 +76,27 @@ public class EnderecosDAO {
 			preparedStmt.executeUpdate();
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro ao deletar");
+		} finally {
+			ConnectionFactory.closeConnection(con, preparedStmt);
+		}
+	}
+	
+	public void update(Enderecos o) {
+		Connection con = ConnectionFactory.getConnection();
+		PreparedStatement preparedStmt = null;
+		try {
+			preparedStmt = con.prepareStatement("UPDATE enderecos SET nr_cep = ?, de_logradouro = ?, nr_numero = ?, de_complemento = ?, de_bairro = ?, de_estado = ?, de_cidade = ? WHERE cd_endereco = ?;");
+			preparedStmt.setString(1, o.getCep());
+			preparedStmt.setString(2, o.getRua());
+			preparedStmt.setString(3, o.getNumero());
+			preparedStmt.setString(4, o.getComplemento());
+			preparedStmt.setString(5, o.getBairro());
+			preparedStmt.setString(6, o.getEstado());
+			preparedStmt.setString(7, o.getCidade());
+			preparedStmt.setInt(8, o.getCodigoEndereco());
+			preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao salvar");
 		} finally {
 			ConnectionFactory.closeConnection(con, preparedStmt);
 		}

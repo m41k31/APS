@@ -183,6 +183,17 @@ public class ViewMain extends JDesktopPane {
 		mnCadastros_Pacientes.setIcon(new ImageIcon(this.getClass().getResource("/group.png")));
 		mnCadastros_profissionaisMedicos.setIcon(new ImageIcon(this.getClass().getResource("/status_offline.png")));
 		mnCadastros_usuariosPermissoesAcesso.setIcon(new ImageIcon(this.getClass().getResource("/user_green.png")));
+		
+		//
+		
+		/*ViewCadastrosPacientes viewCadastrosPacientes = new ViewCadastrosPacientes();
+		desktopPane.add(viewCadastrosPacientes);
+		viewCadastrosPacientes.setVisible(true);
+		BasicInternalFrameUI ui = (BasicInternalFrameUI) viewCadastrosPacientes.getUI(); 
+		Container norte = (Container) ui.getNorthPane(); 
+		norte.remove (0); 
+		norte.validate (); 
+		norte.repaint ();*/
 	}
 
 }

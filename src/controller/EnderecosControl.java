@@ -3,8 +3,10 @@ package controller;
 import java.util.ArrayList;
 
 import model.Enderecos;
+import model.Pacientes;
 import model.Pessoa;
 import modelDAO.EnderecosDAO;
+import modelDAO.PacientesDAO;
 import modelDAO.PessoaDAO;;
 
 public class EnderecosControl {
@@ -24,16 +26,14 @@ public class EnderecosControl {
 			arrPaciente[0] = p.getCidade(); 
 			enderecos.add(arrPaciente);
 		}
-		/*ArrayList<String[]> pessoas = new ArrayList();
-		ArrayList<Pessoa> P = Pessoa.getPessoas();
-		
-		for(int i = 0; i < P.size(); i++) {
-			String p[] = new String[1];
-			p[0] = P.get(i).getNomePessoa();
-			pessoas.add(p);
-		}*/
 		
 		return enderecos;		
+	}
+	
+	public static void updateEndereco(int codigoEndereco, String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade) {
+		Enderecos enderecos = new Enderecos(codigoEndereco, cep, rua, numero, complemento, bairro, estado, cidade);
+		EnderecosDAO enderecoDAO = new EnderecosDAO();
+		enderecoDAO.update(enderecos);
 	}
 	
 }

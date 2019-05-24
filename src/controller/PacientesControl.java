@@ -10,24 +10,20 @@ import modelDAO.PessoaDAO;
 
 public class PacientesControl {
 	
-	public static void salvarPaciente(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil, int codigoEndereco) {
+	public static void salvarPaciente(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil,  String observacao, int codigoEndereco) {
 		Pessoa p = new Pessoa(nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, codigoEndereco);
 		PessoaDAO dao = new PessoaDAO();
 		int codPessoa = dao.create(p);
 		
-		Pacientes paciente = new Pacientes(codPessoa, nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, codigoEndereco);
+		Pacientes paciente = new Pacientes(codPessoa, nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, observacao, codigoEndereco);
 		PacientesDAO pacienteDAO = new PacientesDAO();
 		pacienteDAO.create(paciente);	
 	}
 	
-	public static void updatePaciente(int id, String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil, int codigoEndereco) {
-		/*Pessoa p = new Pessoa(nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, codigoEndereco);
-		PessoaDAO dao = new PessoaDAO();
-		int codPessoa = dao.create(p);
-		
-		Pacientes paciente = new Pacientes(codPessoa, nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, codigoEndereco);
+	public static int updatePaciente(int codigoPaciente, String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil, String observacao) {
+		Pacientes paciente = new Pacientes(codigoPaciente, nomePessoa, dataNascimento, email, rg, cpf, sexo, estadoCivil, observacao);
 		PacientesDAO pacienteDAO = new PacientesDAO();
-		pacienteDAO.create(paciente);*/
+		return pacienteDAO.update(paciente);
 	}
 	
 	public static ArrayList<String[]> resgatarPacientes() {

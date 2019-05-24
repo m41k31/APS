@@ -37,6 +37,16 @@ public class Pessoa {
 		this.codigoPessoa = codigoPessoa;
 	}
 	
+	public Pessoa(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil) {
+		this.nomePessoa = nomePessoa;
+		this.dataNascimento = dataNascimento;
+		this.email = email;
+		this.rg = rg;
+		this.cpf = cpf;
+		this.sexo = sexo;
+		this.estadoCivil = estadoCivil;
+	}
+	
 	public int getCodigoPessoa() {
 		return codigoPessoa;
 	}

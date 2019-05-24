@@ -21,8 +21,9 @@ public class PacientesDAO {
 		Connection con = ConnectionFactory.getConnection();
 		PreparedStatement preparedStmt = null;
 		try {
-			preparedStmt = con.prepareStatement("INSERT INTO pacientes (cd_pessoa) VALUES (?);");
+			preparedStmt = con.prepareStatement("INSERT INTO pacientes (cd_pessoa, de_observacao) VALUES (?,?);");
 			preparedStmt.setInt(1, o.getCodigoPessoa());
+			preparedStmt.setString(2, o.getObservacao());
 			preparedStmt.executeUpdate();
 			preparedStmt.getGeneratedKeys();  
 		} catch (SQLException e) {
@@ -65,6 +66,7 @@ public class PacientesDAO {
 		PreparedStatement preparedStmt = null;
 		ResultSet resultSet = null;
 		int codPessoa = 0;
+		
 		try {
 			preparedStmt = con.prepareStatement("DELETE FROM pacientes WHERE cd_paciente = ?;", PreparedStatement.RETURN_GENERATED_KEYS);
 			preparedStmt.setInt(1, id);
@@ -81,6 +83,34 @@ public class PacientesDAO {
 		return codPessoa;
 	}
 	
+	public int update(Pacientes o) {
+		Connection con = ConnectionFactory.getConnection();
+		PreparedStatement preparedStmt = null;
+		ResultSet resultSet = null;
+		int codEndereco = 0;
+		
+		try {
+			preparedStmt = con.prepareStatement("UPDATE pessoa SET nm_pessoa = ?, dt_nascimento = ?, de_email = ?, nr_rg = ?, nr_cpf = ?, de_sexo = ?, de_estadocivil = ? WHERE cd_pessoa = (SELECT cd_pessoa FROM pacientes WHERE cd_paciente = ?) RETURNING cd_endereco;");
+			preparedStmt.setString(1, o.getNomePessoa());
+			preparedStmt.setString(2, o.getDataNascimento());
+			preparedStmt.setString(3, o.getEmail());
+			preparedStmt.setString(4, o.getRg());
+			preparedStmt.setString(5, o.getCpf());
+			preparedStmt.setString(6, o.getSexo());
+			preparedStmt.setString(7, o.getEstadoCivil());
+			preparedStmt.setInt(8, o.getCodigoPaciente());
+			resultSet = preparedStmt.executeQuery();
+			resultSet.next();
+			codEndereco = resultSet.getInt("cd_endereco");
+		} catch (SQLException e) {
+			Logger.getLogger(ConnectionFactory.class.getName()).log(Level.SEVERE, null, e);
+			//JOptionPane.showMessageDialog(null, "Erro ao salvar");
+		} finally {
+			ConnectionFactory.closeConnection(con, preparedStmt, resultSet);
+		}
+		return codEndereco;
+	}
+	
 	public ArrayList<String[]> readTotal(int id) {
 		Connection con = ConnectionFactory.getConnection();
 		PreparedStatement preparedStmt = null;
@@ -89,11 +119,11 @@ public class PacientesDAO {
 		ArrayList<String[]> listPacientes = new ArrayList<>();
 		try {
 			//SELECT cd_paciente, nm_pessoa, dt_nascimento, de_email, nr_rg, nr_cpf, de_sexo, de_estadocivil, cd_endereco FROM pacientes JOIN pessoa on pacientes.cd_pessoa = pessoa.cd_pessoa;
-			preparedStmt = con.prepareStatement("SELECT cd_paciente, nm_pessoa, dt_nascimento, de_email, nr_rg, nr_cpf, de_sexo, de_estadocivil, nr_cep, de_logradouro, nr_numero, de_complemento, de_bairro, de_estado, de_cidade FROM pacientes JOIN pessoa on pacientes.cd_pessoa = pessoa.cd_pessoa JOIN enderecos on pessoa.cd_endereco = enderecos.cd_endereco WHERE cd_paciente = ?;");
+			preparedStmt = con.prepareStatement("SELECT cd_paciente, nm_pessoa, dt_nascimento, de_email, nr_rg, nr_cpf, de_sexo, de_estadocivil, nr_cep, de_logradouro, nr_numero, de_complemento, de_bairro, de_estado, de_cidade, de_observacao FROM pacientes JOIN pessoa on pacientes.cd_pessoa = pessoa.cd_pessoa JOIN enderecos on pessoa.cd_endereco = enderecos.cd_endereco WHERE cd_paciente = ?;");
 			preparedStmt.setInt(1, id);
 			resultSet = preparedStmt.executeQuery();
 			while(resultSet.next()) {
-				String arrPaciente[] = new String[15];
+				String arrPaciente[] = new String[16];
 				arrPaciente[0] = Integer.toString(resultSet.getInt("cd_paciente"));
 				arrPaciente[1] = resultSet.getString("nm_pessoa"); 
 				arrPaciente[2] = resultSet.getString("dt_nascimento"); 
@@ -109,6 +139,7 @@ public class PacientesDAO {
 				arrPaciente[12] = resultSet.getString("de_bairro"); 
 				arrPaciente[13] = resultSet.getString("de_estado"); 
 				arrPaciente[14] = resultSet.getString("de_cidade"); 
+				arrPaciente[15] = resultSet.getString("de_observacao"); 
 				//Pacientes o = new Pacientes(resultSet.getInt("cd_paciente"));
 				listPacientes.add(arrPaciente);
 			}

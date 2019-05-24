@@ -8,8 +8,20 @@ public class Enderecos {
 	private String bairro;
 	private String estado;
 	private String cidade;
-	
+	private int codigoEndereco;
+
 	public Enderecos(String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade) {
+		this.cep = cep;
+		this.rua = rua;
+		this.numero = numero;
+		this.complemento = complemento;
+		this.bairro = bairro;
+		this.estado = estado;
+		this.cidade = cidade;
+	}
+	
+	public Enderecos(int codigoEndereco, String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade) {
+		this.codigoEndereco = codigoEndereco;
 		this.cep = cep;
 		this.rua = rua;
 		this.numero = numero;
@@ -73,5 +85,13 @@ public class Enderecos {
 
 	public void setCidade(String cidade) {
 		this.cidade = cidade;
+	}
+	
+	public int getCodigoEndereco() {
+		return codigoEndereco;
+	}
+
+	public void setCodigoEndereco(int codigoEndereco) {
+		this.codigoEndereco = codigoEndereco;
 	}
 }

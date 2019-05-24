@@ -11,6 +11,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.PlainDocument;
 
 import controller.EnderecosControl;
 import controller.PacientesControl;
@@ -18,6 +22,7 @@ import controller.PessoaControl;
 
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
@@ -31,6 +36,7 @@ import java.awt.CardLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import model.Pessoa;
@@ -62,6 +68,7 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 	private Choice selEstadoCivil; 
 	private Choice selSexo;
 	private Choice selEstado;
+	private JTextPane txtObservacao;
 	
 	public void readJTable() {
 		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
@@ -76,32 +83,23 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 				pacientes.get(i)[4]
 			});
 		}
-		//modelo.addColumn("ID");
-		/*ArrayList<String[]> enderecos = EnderecosControl.resgatarPessoas();
-		for(int i = 0; i < enderecos.size(); i++) {
-			modelo.addRow(new Object[] {					
-				enderecos.get(i)[0]
-			});
-		}*/
 	}
 	
 	public void resgatarPacienteTotal(int id) {
 		ArrayList<String[]> pacientes = PacientesControl.resgatarPacienteTotal(id);
 		for(int i = 0; i < pacientes.size(); i++) {
 			txtNome.setText(pacientes.get(i)[1]);
-			txtDataNascimento.setText(pacientes.get(i)[2]);
+			txtDataNascimento.setValue(pacientes.get(i)[2]);
 			txtEmail.setText(pacientes.get(i)[3]);
 			txtRG.setText(pacientes.get(i)[4]);
 			txtCPF.setText(pacientes.get(i)[5]);
 			for (int j = 0; j < selSexo.getItemCount(); j++) {
-				//System.out.println(pacientes.get(i)[4]);
 				if (selSexo.getItem(j).equals(pacientes.get(i)[6])) {
 					selSexo.select(j);
 					break;
 				}
 			}
 			for (int j = 0; j < selEstadoCivil.getItemCount(); j++) {
-				//System.out.println(pacientes.get(i)[4]);
 				if (selEstadoCivil.getItem(j).equals(pacientes.get(i)[7])) {
 					selEstadoCivil.select(j);
 					break;
@@ -113,13 +111,13 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 			txtComplemento.setText(pacientes.get(i)[11]);
 			txtBairro.setText(pacientes.get(i)[12]);
 			for (int j = 0; j < selEstado.getItemCount(); j++) {
-				//System.out.println(pacientes.get(i)[4]);
 				if (selEstado.getItem(j).equals(pacientes.get(i)[13])) {
 					selEstado.select(j);
 					break;
 				}
 			}
 			txtCidade.setText(pacientes.get(i)[14]);
+			txtObservacao.setText(pacientes.get(i)[15]);
 		}
 	}
 
@@ -169,7 +167,6 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 				int id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(), 0));
 				PacientesControl.deletarPaciente(id);
 				readJTable();
-				//int id = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0));
 				
 			}
 		});
@@ -177,12 +174,12 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 		JButton btnUpdate = new JButton("Salvar");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(), 0));
-				//PacientesControl.deletarPaciente(id);
-				//int codEndereco = EnderecosControl.salvarEndereco(id);
-				//PacientesControl.updatePaciente(id, txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), codEndereco);
-				//cardLayout.show(getContentPane(), "pnlCadastros");
-				//readJTable();
+				int codigoPaciente = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(), 0));
+				int codigoEndereco = PacientesControl.updatePaciente(codigoPaciente, txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), txtObservacao.getText());
+				EnderecosControl.updateEndereco(codigoEndereco, txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText());
+				limparCampos();
+				cardLayout.show(getContentPane(), "pnlCadastros");
+				readJTable();	
 			}
 		});
 		JButton btnNovo = new JButton("Novo");
@@ -330,9 +327,15 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 		label_3.setBounds(27, 103, 68, 14);
 		tabDadosPaciente.add(label_3);
 		
-		txtDataNascimento = new JFormattedTextField();
+		try {
+			txtDataNascimento = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
 		txtDataNascimento.setBounds(102, 97, 174, 26);
 		tabDadosPaciente.add(txtDataNascimento);
+		txtDataNascimento.setDocument(new JTextFieldLimit(10));
+		txtDataNascimento.setCaretPosition(0);
 		
 		selEstadoCivil = new Choice();
 		selEstadoCivil.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -475,13 +478,13 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 		label_16.setBounds(10, 11, 566, 14);
 		tabObservacoes.add(label_16);
 		
-		JTextPane txtObservacao = new JTextPane();
+		txtObservacao = new JTextPane();
 		txtObservacao.setBounds(12, 36, 566, 407);
 		tabObservacoes.add(txtObservacao);		
 		
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*if (txtNome.getText().isEmpty()) {
+				if (txtNome.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Digite o nome do paciente");
 				} else if (txtRG.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Digite o RG paciente");
@@ -505,32 +508,13 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 					JOptionPane.showMessageDialog(null, "Digite a Cidade do endereço");
 				} else if (selEstado.getSelectedItem().equals("Selecione o Estado")) {
 					JOptionPane.showMessageDialog(null, "Selecione o Estado do endereço");
-				} else {*/
+				} else {
 					int codEndereco = EnderecosControl.salvarEndereco(txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText());
-					PacientesControl.salvarPaciente(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), codEndereco);
+					PacientesControl.salvarPaciente(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), txtObservacao.getText(), codEndereco);
+					limparCampos();
 					cardLayout.show(getContentPane(), "pnlCadastros");
-					readJTable();
-				//}
-				//int codEndereco = EnderecosControl.salvarEndereco(txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText());
-				//int codPessoa = PessoaControl.salvarPessoa(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), codEndereco);
-				//PacientesControl.salvarPaciente(codPessoa);
-				//int codEndereco = EnderecosControl.salvarEndereco(txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText());
-				//int codPessoa = PessoaControl.salvarPessoa(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), codEndereco);
-				//PacientesControl.salvarPaciente(codPessoa);
-				/*Pessoa p = new Pessoa();
-				PessoaDAO dao = new PessoaDAO();
-				
-				p.setCodigoPaciente(1);
-				p.setNomePessoa(txtNome.getText());
-				p.setDataNascimento(txtDataNascimento.getText());
-				p.setEmail(txtEmail.getText());
-				p.setRg(txtRG.getText());
-				p.setCpf(txtCPF.getText());
-				p.setSexo(selSexo.getSelectedItem());
-				p.setEstadoCivil(selEstadoCivil.getSelectedItem());
-				p.setCodigoEndereco(1);
-
-				dao.create(p);*/		
+					readJTable();	
+				}
 			}
 		});
 		btnSalvar.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -540,6 +524,7 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 		JButton btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				limparCampos();
 				cardLayout.show(getContentPane(), "pnlCadastros");
 				readJTable();
 			}
@@ -654,4 +639,45 @@ public class ViewCadastrosPacientes extends JInternalFrame {
 		 * Images
 		 */
 	}
+	
+	public void limparCampos() {
+		txtNome.setText("");
+		txtRG.setText("");
+		txtCPF.setText("");
+		txtDataNascimento.setValue(null);
+		selEstadoCivil.select(0);
+		selSexo.select(0);
+		txtEmail.setText("");
+		txtFoneResidencial.setText("");
+		txtFoneCelular.setText("");
+		txtCep.setText("");
+		txtEndereco.setText("");
+		txtNumero.setText("");
+		txtComplemento.setText("");
+		txtBairro.setText("");
+		txtCidade.setText("");
+		selEstado.select(0);		
+	}
+	
+	class JTextFieldLimit extends PlainDocument {
+		  private int limit;
+		  JTextFieldLimit(int limit) {
+		    super();
+		    this.limit = limit;
+		  }
+
+		  JTextFieldLimit(int limit, boolean upper) {
+		    super();
+		    this.limit = limit;
+		  }
+
+		  public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+		    if (str == null)
+		      return;
+
+		    if ((getLength() + str.length()) <= limit) {
+		      super.insertString(offset, str, attr);
+		    }
+		  }
+		}
 }
