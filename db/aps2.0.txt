@@ -1,0 +1,308 @@
+CREATE TABLE Exames (
+                cd_exame SERIAL,
+                cd_diagnostico INTEGER NOT NULL,
+                nm_exame VARCHAR(20) NOT NULL,
+                de_exame VARCHAR(20) NOT NULL
+                
+);
+
+
+CREATE TABLE Diagnosticos (
+                cd_diagnostico SERIAL,
+                cd_exame INTEGER NOT NULL,
+                de_diagnostico VARCHAR(200) NOT NULL,
+                cd_consulta INTEGER NOT NULL
+                
+);
+
+
+CREATE TABLE Pacientes (
+                cd_paciente SERIAL,
+                cd_pessoa INTEGER NOT NULL,
+				de_observacao VARCHAR(255) 
+);
+
+CREATE TABLE PacienteObservacao (
+                cd_observacao SERIAL,
+                de_observacao VARCHAR(250) NOT NULL,
+				cd_paciente INTEGER NOT NULL		
+);
+
+CREATE TABLE Consultas (
+                cd_consulta SERIAL,
+                cd_paciente INTEGER NOT NULL,
+                de_dataconsulta VARCHAR(10) NOT NULL,
+                de_horarioconsulta VARCHAR(10) NOT NULL,
+                de_status VARCHAR(20) NOT NULL,
+                de_retorno VARCHAR(20) NOT NULL,
+                de_observacao VARCHAR(250) NOT NULL,
+                cd_diagnostico INTEGER NOT NULL,
+                cd_exame INTEGER NOT NULL
+                
+);
+CREATE TABLE Cargos (
+                cd_cargos SERIAL,
+                nm_cargo VARCHAR(30) NOT NULL
+                
+);
+
+CREATE TABLE DiasDeTrabalho (
+                cd_diasdetrabalho SERIAL,
+                nm_diasdasemana VARCHAR(20) NOT NULL
+                
+);
+CREATE TABLE HorariosDeTrabalho (
+                cd_horariosdetrabalho SERIAL,
+                nr_horaentrada VARCHAR(10) NOT NULL,
+                nr_horasaida VARCHAR(10) NOT NULL,
+                cd_diasdetrabalho INTEGER NOT NULL
+                
+);
+
+CREATE TABLE Permissao (
+                cd_permissao SERIAL,
+                de_permissao VARCHAR(250) NOT NULL
+                
+);
+CREATE TABLE EspecialidadeMedica (
+                cd_especialidademedica SERIAL,
+                de_especialidade VARCHAR(250) NOT NULL
+                
+);
+CREATE TABLE Telefones (
+                cd_telefone SERIAL,
+                nr_telefone VARCHAR(20) NOT NULL,
+				tp_telefone INTEGER NOT NULL
+               
+);
+CREATE TABLE Enderecos (
+                cd_endereco SERIAL,
+                nr_cep VARCHAR(20) NOT NULL,
+                de_logradouro VARCHAR(200) NOT NULL,
+                nr_numero VARCHAR(10) NOT NULL,
+                de_complemento VARCHAR(50) NOT NULL,
+                de_bairro VARCHAR(50) NOT NULL,
+                de_estado VARCHAR(50) NOT NULL,
+                de_cidade VARCHAR(50) NOT NULL
+                
+);
+CREATE TABLE Pessoa (
+                cd_pessoa SERIAL,
+                nm_pessoa VARCHAR(250) NOT NULL,
+                dt_nascimento VARCHAR(10) NOT NULL,
+                de_email VARCHAR(100) NOT NULL,
+                nr_rg VARCHAR(20) NOT NULL,
+                nr_cpf VARCHAR(20) NOT NULL,
+                de_sexo VARCHAR(30) NOT NULL,
+                de_estadocivil VARCHAR(30) NOT NULL,
+                cd_endereco INTEGER NOT NULL
+                
+);
+
+
+
+
+CREATE TABLE Funcionarios (
+                cd_funcionario SERIAL,
+                de_login VARCHAR(100) NOT NULL,
+                de_senha VARCHAR(100) NOT NULL,
+                cd_pessoa INTEGER NOT NULL
+                
+);
+
+
+
+CREATE TABLE RelacionamentoCargosFuncionarios (
+                cd_funcionario INTEGER NOT NULL,
+                cd_cargos INTEGER NOT NULL
+               
+);
+
+
+CREATE TABLE RelacionametoFuncionariosHorariosDeTrabalho (
+                cd_horariosdetrabalho INTEGER NOT NULL,
+                cd_funcionario INTEGER NOT NULL
+                
+);
+
+
+CREATE TABLE RelacionamentoFuncionariosPermissao (
+                cd_funcionario INTEGER NOT NULL,
+                cd_permissao INTEGER NOT NULL
+                
+);
+CREATE TABLE Medicos (
+                cd_crm INTEGER NOT NULL,
+                cd_funcionario INTEGER NOT NULL
+                
+);
+
+CREATE TABLE RelacionamentoMedicosConsultas (
+                cd_consulta INTEGER NOT NULL,
+                cd_crm INTEGER NOT NULL
+               
+);
+
+CREATE TABLE RelacionamentoEspecialidadeMedicaMedicos (
+                cd_especialidademedica INTEGER NOT NULL,
+                cd_crm INTEGER NOT NULL
+                
+);
+
+CREATE TABLE RelacionamentoTelefonesPessoa (
+                cd_telefone INTEGER NOT NULL,
+                cd_pessoa INTEGER NOT NULL
+                
+);
+
+ALTER TABLE Exames ADD CONSTRAINT exames_pk PRIMARY KEY ( cd_exame); 
+ALTER TABLE Diagnosticos ADD CONSTRAINT diagnosticos_pk PRIMARY KEY (cd_diagnostico);
+ALTER TABLE Pacientes ADD CONSTRAINT pacientes_pk PRIMARY KEY (cd_paciente); 
+ALTER TABLE Consultas ADD CONSTRAINT consultas_pk PRIMARY KEY (cd_consulta); 
+ALTER TABLE Cargos ADD CONSTRAINT cargos_pk PRIMARY KEY (cd_cargos); 
+ALTER TABLE DiasDeTrabalho ADD CONSTRAINT diasdetrabalho_pk PRIMARY KEY (cd_diasdetrabalho); 
+ALTER TABLE HorariosDeTrabalho ADD CONSTRAINT horariosdetrabalho_pk PRIMARY KEY (cd_horariosdetrabalho);
+ALTER TABLE Permissao ADD CONSTRAINT permissao_pk PRIMARY KEY (cd_permissao);
+ALTER TABLE EspecialidadeMedica ADD CONSTRAINT especialidademedica_pk PRIMARY KEY (cd_especialidademedica);
+ALTER TABLE Telefones ADD  CONSTRAINT telefones_pk PRIMARY KEY (cd_telefone); 
+ALTER TABLE Enderecos ADD CONSTRAINT enderecos_pk PRIMARY KEY (cd_endereco); 
+ALTER TABLE Pessoa ADD CONSTRAINT pessoa_pk PRIMARY KEY (cd_pessoa); 
+ALTER TABLE Funcionarios ADD CONSTRAINT funcionarios_pk PRIMARY KEY (cd_funcionario); 
+ALTER TABLE RelacionamentoCargosFuncionarios ADD  CONSTRAINT relacionamento_cargos_funcionarios PRIMARY KEY (cd_funcionario, cd_cargos); 
+ALTER TABLE RelacionametoFuncionariosHorariosDeTrabalho  ADDCONSTRAINT relacionameto_funcionarios_horariosdetrabalho PRIMARY KEY (cd_horariosdetrabalho, cd_funcionario);
+ALTER TABLE RelacionamentoFuncionariosPermissao ADD CONSTRAINT reelacionamento_funcionarios_permisao PRIMARY KEY (cd_funcionario, cd_permissao);
+ALTER TABLE Medicos ADD CONSTRAINT medicos_pk PRIMARY KEY (cd_crm);
+ALTER TABLE RelacionamentoMedicosConsultas ADD  CONSTRAINT relacionamento_medicos_consultas_pk PRIMARY KEY (cd_consulta, cd_crm); 
+ALTER TABLE RelacionamentoEspecialidadeMedicaMedicos ADD CONSTRAINT relacionamento_especialidademedica_medicos_pk PRIMARY KEY (cd_especialidademedica, cd_crm); 
+ALTER TABLE RelacionamentoTelefonesPessoa ADD CONSTRAINT relacionamento_telefones_pessoa PRIMARY KEY (cd_telefone, cd_pessoa); 
+
+ALTER TABLE Diagnosticos ADD CONSTRAINT exames_diagnosticos_fk
+FOREIGN KEY (cd_diagnostico, cd_exame)
+REFERENCES Exames (cd_diagnostico, cd_exame)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Consultas ADD CONSTRAINT diagnosticos_consultas_fk
+FOREIGN KEY (cd_diagnostico, cd_exame)
+REFERENCES Diagnosticos (cd_diagnostico, cd_exame)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Pessoa ADD CONSTRAINT pacientes_pessoa_fk
+FOREIGN KEY (cd_paciente)
+REFERENCES Pacientes (cd_paciente)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE Consultas ADD CONSTRAINT pacientes_consultas_fk
+FOREIGN KEY (cd_paciente)
+REFERENCES Pacientes (cd_paciente)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoCargosFuncionarios ADD CONSTRAINT cargos_relacionamento_cargos_funcionarios_fk
+FOREIGN KEY (cd_cargos)
+REFERENCES Cargos (cd_cargos)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE HorariosDeTrabalho ADD CONSTRAINT diasdetrabalho_horariosdetrabalho_fk
+FOREIGN KEY (cd_diasdetrabalho)
+REFERENCES DiasDeTrabalho (cd_diasdetrabalho)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+
+ALTER TABLE RelacionametoFuncionariosHorariosDeTrabalho ADD CONSTRAINT horariosdetrabalho_relacionameto_funcionarios_horariosdetrabalho_fk
+FOREIGN KEY (cd_horariosdetrabalho)
+REFERENCES HorariosDeTrabalho (cd_horariosdetrabalho)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+
+
+ALTER TABLE RelacionamentoFuncionariosPermissao ADD CONSTRAINT permissao_relacionamento_funcionarios_permissao_fk
+FOREIGN KEY (cd_permissao)
+REFERENCES Permissao (cd_permissao)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoEspecialidadeMedicaMedicos ADD CONSTRAINT especialidademedica_relacionamento_especialidademedica_medicos_fk
+FOREIGN KEY (cd_especialidademedica)
+REFERENCES EspecialidadeMedica (cd_especialidademedica)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoTelefonesPessoa ADD CONSTRAINT telefones_relacionamento_telefones_pessoa_fk
+FOREIGN KEY (cd_telefone)
+REFERENCES Telefones (cd_telefone)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Pessoa ADD CONSTRAINT enderecos_pessoa_fk
+FOREIGN KEY (cd_endereco)
+REFERENCES Enderecos (cd_endereco)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+
+ALTER TABLE RelacionamentoTelefonesPessoa ADD CONSTRAINT pessoa_relacionamento_telefones_pessoa_fk
+FOREIGN KEY (cd_pessoa)
+REFERENCES Pessoa (cd_pessoa)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Funcionarios ADD CONSTRAINT pessoa_funcionarios_fk
+FOREIGN KEY (cd_pessoa)
+REFERENCES Pessoa (cd_pessoa)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE Medicos ADD CONSTRAINT funcionarios_medicos_fk
+FOREIGN KEY (cd_funcionario)
+REFERENCES Funcionarios (cd_funcionario)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+
+ALTER TABLE RelacionametoFuncionariosHorariosDeTrabalho ADD CONSTRAINT funcionarios_relacionameto_funcionarios_horariosdetrabalho_fk
+FOREIGN KEY (cd_funcionario)
+REFERENCES Funcionarios (cd_funcionario)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoCargosFuncionarios ADD CONSTRAINT funcionarios_relacionamento_cargos_funcionarios_fk
+FOREIGN KEY (cd_funcionario)
+REFERENCES Funcionarios (cd_funcionario)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoEspecialidadeMedicaMedicos ADD CONSTRAINT medicos_relacionamento_especialidademedica_medicos_fk
+FOREIGN KEY (cd_crm)
+REFERENCES Medicos (cd_crm)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE RelacionamentoMedicosConsultas ADD CONSTRAINT medicos_relacionamento_medicos_consultas_fk
+FOREIGN KEY (cd_crm)
+REFERENCES Medicos (cd_crm)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
