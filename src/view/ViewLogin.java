@@ -114,7 +114,7 @@ public class ViewLogin extends JFrame {
 		JButton btnEntrar = new JButton("Entrar");
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(txtCdFuncionario.getText().equals("12345") && txtPassFuncionario.getText().equals("12345")) {
+				if(txtCdFuncionario.getText().equals("admin") && txtPassFuncionario.getText().equals("admin")) {
 					ViewMain frameMain = new ViewMain();
 					frameMain.getJFMain().setVisible(true);
 					frame.setVisible(false);

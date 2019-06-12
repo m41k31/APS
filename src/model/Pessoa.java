@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class Pessoa {
+public abstract class Pessoa {
 	private String nomePessoa;
 	private String dataNascimento;
 	private String email;
@@ -10,32 +10,7 @@ public class Pessoa {
 	private String cpf;
 	private String sexo;
 	private String estadoCivil;
-	private int codigoEndereco;
 	private int codigoPessoa;
-
-	public Pessoa(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil, int codigoEndereco, int codigoPessoa) {
-		this.nomePessoa = nomePessoa;
-		this.dataNascimento = dataNascimento;
-		this.email = email;
-		this.rg = rg;
-		this.cpf = cpf;
-		this.sexo = sexo;
-		this.estadoCivil = estadoCivil;
-		this.codigoEndereco = codigoEndereco;	
-		this.codigoPessoa = codigoPessoa;
-	}
-	
-	public Pessoa(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil, int codigoEndereco) {
-		this.nomePessoa = nomePessoa;
-		this.dataNascimento = dataNascimento;
-		this.email = email;
-		this.rg = rg;
-		this.cpf = cpf;
-		this.sexo = sexo;
-		this.estadoCivil = estadoCivil;
-		this.codigoEndereco = codigoEndereco;	
-		this.codigoPessoa = codigoPessoa;
-	}
 	
 	public Pessoa(String nomePessoa, String dataNascimento, String email, String rg, String cpf, String sexo, String estadoCivil) {
 		this.nomePessoa = nomePessoa;
@@ -110,13 +85,5 @@ public class Pessoa {
 	public void setEstadoCivil(String estadoCivil) {
 		this.estadoCivil = estadoCivil;
 	}
-	
-	public int getCodigoEndereco() {
-		return codigoEndereco;
-	}
-	
-	public void setCodigoEndereco(int codigoEndereco) {
-		this.codigoEndereco = codigoEndereco;
-	}	
 	
 }

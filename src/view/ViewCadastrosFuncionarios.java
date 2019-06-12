@@ -1,72 +1,66 @@
 package view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JInternalFrame;
 import java.awt.CardLayout;
-import javax.swing.JPanel;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
+import java.util.HashMap;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.LineBorder;
-import java.awt.SystemColor;
-import java.awt.Font;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.JFormattedTextField;
-import java.awt.Choice;
-import java.awt.Checkbox;
-import javax.swing.JPasswordField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.PlainDocument;
+
+import controller.CargosControl;
+import controller.EnderecosControl;
+import controller.EspecialidadeMedicaControl;
+import controller.FuncionariosControl;
+import controller.MedicosControl;
 
 public class ViewCadastrosFuncionarios extends JInternalFrame {
 	private ArrayList<Choice> listEspecialidade = new ArrayList<Choice>();
 	private int listEspecialidadeY = 99;
 	private int btnAddEspecialidadeY = 97;
-	private JTextField txtPesquisar;
 	private JTable table;
-	private JTextField txtNome;
-	private JTextField txtRG;
-	private JTextField txtCPF;
-	private JTextField txtEmail;
-	private JTextField txtFoneResidencial;
-	private JTextField txtFoneCelular;
-	private JTextField txtCep;
-	private JTextField txtEndereco;
-	private JTextField txtNumero;
-	private JTextField txtComplemento;
-	private JTextField txtBairro;
-	private JTextField txtCidade;
-	private JTextField txtLogin;
-	private JTextField txtCrm;
-	private JTextField txtHoraEntrada1;
-	private JTextField txtHoraSaida1;
-	private JTextField txtHoraEntrada2;
-	private JTextField txtHoraSaida2;
-	private JTextField txtHoraSaida3;
-	private JTextField txtHoraEntrada3;
-	private JTextField txtHoraEntrada4;
-	private JTextField txtHoraSaida4;
-	private JTextField txtHoraSaida5;
-	private JTextField txtHoraEntrada5;
-	private JTextField txtHoraEntrada6;
-	private JTextField txtHoraSaida6;
-	private JTextField txtHoraSaida7;
-	private JTextField txtHoraEntrada7;
+	private JTextField txtPesquisar, txtNome, txtRG, txtCPF, txtEmail, txtFoneResidencial, txtFoneCelular, txtCep, txtEndereco, txtNumero, txtComplemento, txtBairro, txtCidade, txtLogin, txtCrm;
+	private JFormattedTextField txtDataNascimento;
 	private JPasswordField txtPassword;
-
+	private Choice selEstadoCivil, selEstado, selTipoFuncionario, selSexo;
+	private Checkbox cbSegunda, cbTerca, cbQuarta, cbQuinta, cbSexta, cbSabado, cbDomingo;
+	private JTextField txtHoraEntrada1, txtHoraEntrada2, txtHoraEntrada3, txtHoraEntrada4, txtHoraEntrada5, txtHoraEntrada6, txtHoraEntrada7;
+	private JTextField txtHoraSaida1, txtHoraSaida2, txtHoraSaida3, txtHoraSaida4, txtHoraSaida5, txtHoraSaida6, txtHoraSaida7;
+	private HashMap<String, Integer> idCargos;
+	private HashMap<String, Integer> idEspecialidadeMedica;
+	private JButton btnNovo;
+	private JButton btnEditar;
+	private JButton btnRemover;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -82,11 +76,67 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 			}
 		});
 	}
+	
+	public void readCargos() {
+		selTipoFuncionario.add("Selecione o tipo");
+		ArrayList<String[]> cargos = CargosControl.listarCargos();
+		for(int i = 0; i < cargos.size(); i++) {
+			idCargos.put(cargos.get(i)[1], Integer.parseInt(cargos.get(i)[0]));
+			selTipoFuncionario.add(cargos.get(i)[1]);
+		}
+	}
+	
+	public void readJTable() {
+		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+		modelo.setNumRows(0);
+		ArrayList<String[]> funcionarios = FuncionariosControl.listarFuncionarios();
+		for(int i = 0; i < funcionarios.size(); i++) {
+			modelo.addRow(new Object[] {					
+				funcionarios.get(i)[0],
+				funcionarios.get(i)[1],
+				funcionarios.get(i)[2],
+				funcionarios.get(i)[3],
+				funcionarios.get(i)[4],
+				funcionarios.get(i)[5]
+			});
+		}
+	}
+	
+	public void limparCampos() {
+		txtNome.setText("");
+		txtRG.setText("");
+		txtCPF.setText("");
+		txtDataNascimento.setValue(null);
+		selEstadoCivil.select(0);
+		selSexo.select(0);
+		txtEmail.setText("");
+		txtFoneResidencial.setText("");
+		txtFoneCelular.setText("");
+		txtCep.setText("");
+		txtEndereco.setText("");
+		txtNumero.setText("");
+		txtComplemento.setText("");
+		txtBairro.setText("");
+		txtCidade.setText("");
+		selEstado.select(0);		
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public ViewCadastrosFuncionarios() {
+		/*CargosControl.createBase("Gerente");
+		CargosControl.createBase("Médico");
+		CargosControl.createBase("Recepcionista");
+		EspecialidadeMedicaControl.createBase("Cardiologista");
+		EspecialidadeMedicaControl.createBase("Clinico geral");
+		EspecialidadeMedicaControl.createBase("Geriatra");
+		EspecialidadeMedicaControl.createBase("Reumatologista");
+		EspecialidadeMedicaControl.createBase("Urologista");*/
+		
+		idCargos = new HashMap<String, Integer>();
+		idEspecialidadeMedica = new HashMap<String, Integer>();
+		
 		setTitle("Cadastro de Profissionais");
 		setClosable(true);
 		setMaximizable(true);
@@ -103,66 +153,50 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		txtPesquisar = new JTextField();
 		txtPesquisar.setColumns(10);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-				 DefaultTableModel modelo = new DefaultTableModel();
-				  table.setModel(modelo);     //tableActivities é o nome da minha jTable
-				  modelo.addColumn("ID");
-				  modelo.addColumn("Nome");
-				  modelo.addColumn("Especialidade Principal");
-				  modelo.addColumn("Fone Fixo");
-				  modelo.addColumn("Fone Celular");
-			      modelo.addRow(new Object[]{"a", "c894083 24 238904238 9490238", "Clinico geral"});  
-			      modelo.addRow(new Object[]{"a", "b", "c"});  
-			      modelo.addRow(new Object[]{"a", "b", "c"});  
-
-			      TableColumn col = table.getColumnModel().getColumn(0);
-			      col.setMinWidth(60);
-			      col.setMaxWidth(60);
-			      col.setWidth(60);
-			      col.setPreferredWidth(60);
-			      col = table.getColumnModel().getColumn(1);
-			      col.setMinWidth(200);
-			      //col.setMaxWidth(200);
-			      col.setWidth(200);
-			      //col.setPreferredWidth(200);
-			      col = table.getColumnModel().getColumn(2);
-			      col.setMinWidth(150);
-			      col.setMaxWidth(150);
-			      col.setWidth(150);
-			      //col.setPreferredWidth(200);
-			      col = table.getColumnModel().getColumn(3);
-			      col.setMinWidth(150);
-			      col.setMaxWidth(150);
-			      col.setWidth(150);
-			      col.setPreferredWidth(150);
-			      col = table.getColumnModel().getColumn(4);
-			      col.setMinWidth(150);
-			      col.setMaxWidth(150);
-			      col.setWidth(150);
-			      col.setPreferredWidth(150);
+		JScrollPane scrollPane = new JScrollPane();
+		
+		btnNovo = new JButton("Novo");
+		btnNovo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				limparCampos();
+				cardLayout.show(getContentPane(), "pnlCadastrar");
 			}
 		});
+		btnNovo.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnNovo.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnNovo.setFont(new Font("Arial", Font.PLAIN, 9));
 		
-		JScrollPane scrollPane = new JScrollPane();
+		btnEditar = new JButton("Editar");
+		btnEditar.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnEditar.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnEditar.setFont(new Font("Arial", Font.PLAIN, 9));
+		btnEditar.setEnabled(false);
+		
+		btnRemover = new JButton("Apagar");
+		btnRemover.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnRemover.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnRemover.setFont(new Font("Arial", Font.PLAIN, 9));
+		btnRemover.setEnabled(false);
 		GroupLayout gl_pnlCadastros = new GroupLayout(pnlCadastros);
 		gl_pnlCadastros.setHorizontalGroup(
 			gl_pnlCadastros.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnlCadastros.createSequentialGroup()
-					.addGroup(gl_pnlCadastros.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_pnlCadastros.createSequentialGroup()
+					.addGroup(gl_pnlCadastros.createParallelGroup(Alignment.TRAILING)
+						.addGroup(Alignment.LEADING, gl_pnlCadastros.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE))
 						.addGroup(gl_pnlCadastros.createSequentialGroup()
 							.addGap(10)
 							.addGroup(gl_pnlCadastros.createParallelGroup(Alignment.LEADING)
 								.addComponent(txtPesquisar, GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
 								.addComponent(lblNewLabel)))
 						.addGroup(gl_pnlCadastros.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE))
-						.addGroup(gl_pnlCadastros.createSequentialGroup()
-							.addGap(209)
-							.addComponent(btnNewButton)))
+							.addContainerGap(403, Short.MAX_VALUE)
+							.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+							.addGap(6)
+							.addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+							.addGap(6)
+							.addComponent(btnRemover, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		gl_pnlCadastros.setVerticalGroup(
@@ -173,13 +207,20 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(txtPesquisar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 320, GroupLayout.PREFERRED_SIZE)
-					.addGap(69)
-					.addComponent(btnNewButton)
-					.addGap(54))
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_pnlCadastros.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnNovo, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnEditar, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnRemover, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
 		);
 		
-		table = new JTable();
+		table = new JTable(){
+			public boolean isCellEditable(int rowIndex, int colIndex) {        
+				return false;
+			}
+		};
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
 				{},
@@ -187,7 +228,9 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 			new String[] {
 			}
 		));
-		table.setColumnSelectionAllowed(true);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setColumnSelectionAllowed(false);
+		table.setRowSelectionAllowed(true);
 		scrollPane.setViewportView(table);
 		pnlCadastros.setLayout(gl_pnlCadastros);
 		
@@ -197,9 +240,85 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		JTabbedPane tabCadastrarMedicos = new JTabbedPane(JTabbedPane.TOP);
 		
 		JButton btnSalvar = new JButton("Salvar");
+		btnSalvar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (txtNome.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o nome do paciente");
+				} else if (txtRG.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o RG paciente");
+				} else if (txtCPF.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o CPF paciente");
+				} else if (txtDataNascimento.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite a Data de Nascimento do paciente");
+				} else if (selEstadoCivil.getSelectedItem().equals("Selecione o Estado Civil")) {
+					JOptionPane.showMessageDialog(null, "Selecione o Estado Civil");
+				} else if (selSexo.getSelectedItem().equals("Selecione o Sexo")) {
+					JOptionPane.showMessageDialog(null, "Selecione o Sexo");
+				} else if (txtCep.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o CEP do endereço");
+				} else if (txtEndereco.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite a Rua do endereço");
+				} else if (txtNumero.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o Número do endereço");
+				} else if (txtBairro.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o Bairro do endereço");
+				} else if (txtCidade.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite a Cidade do endereço");
+				} else if (selEstado.getSelectedItem().equals("Selecione o Estado")) {
+					JOptionPane.showMessageDialog(null, "Selecione o Estado do endereço");
+				
+				} else if (txtLogin.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite o login do funcionário");
+				} else if (txtPassword.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Digite a senha do funcionário");
+				} else if (selTipoFuncionario.getSelectedItem().equals("Selecione o tipo")) {
+					JOptionPane.showMessageDialog(null, "Selecione o tipo de funcionário");
+				} else if (selTipoFuncionario.getSelectedItem().equals("Médico") && listEspecialidade.get(0).getSelectedItem().equals("Selecione a Especialidade")) { 
+					JOptionPane.showMessageDialog(null, "Selecione a Especialidade médica");
+				} else if (selTipoFuncionario.getSelectedItem().equals("Médico") && txtCrm.getText().isEmpty()) { 
+					JOptionPane.showMessageDialog(null, "Digite o crm do médico");
+				} else if(cbSegunda.getState() && (txtHoraEntrada1.getText().isEmpty() || txtHoraSaida1.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de segunda-feira");
+				} else if(cbTerca.getState() && (txtHoraEntrada2.getText().isEmpty() || txtHoraSaida2.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de terça-feira");
+				} else if(cbQuarta.getState() && (txtHoraEntrada3.getText().isEmpty() || txtHoraSaida3.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de quarta-feira");
+				} else if(cbQuinta.getState() && (txtHoraEntrada4.getText().isEmpty() || txtHoraSaida4.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de quinta-feira");
+				} else if(cbSexta.getState() && (txtHoraEntrada5.getText().isEmpty() || txtHoraSaida5.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de sexta-feira");
+				} else if(cbSabado.getState() && (txtHoraEntrada6.getText().isEmpty() || txtHoraSaida6.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de sábado");
+				} else if(cbDomingo.getState() && (txtHoraEntrada7.getText().isEmpty() || txtHoraSaida7.getText().isEmpty())) {
+					JOptionPane.showMessageDialog(null, "Digite a hora de entrada e saída de domingo");
+				} else {
+					if (selTipoFuncionario.getSelectedIndex() == 2) {
+						int codigoPessoa = MedicosControl.salvarMedico(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), Integer.parseInt(txtCrm.getText()), txtLogin.getText(), txtPassword.getText());
+						EnderecosControl.salvarEndereco(txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText(), codigoPessoa);	
+						CargosControl.salvarCargo(idCargos.get(selTipoFuncionario.getSelectedItem()), codigoPessoa);
+						for(int i = 0; i < listEspecialidade.size(); i++) {
+							EspecialidadeMedicaControl.salvarEspecialidade(idEspecialidadeMedica.get(listEspecialidade.get(i).getSelectedItem()), codigoPessoa);
+						}
+					} else {
+						int codigoPessoa = FuncionariosControl.salvarFuncionario(txtNome.getText(), txtDataNascimento.getText(), txtEmail.getText(), txtRG.getText(), txtCPF.getText(), selSexo.getSelectedItem(), selEstadoCivil.getSelectedItem(), txtLogin.getText(), txtPassword.getText());
+						EnderecosControl.salvarEndereco(txtCep.getText(), txtEndereco.getText(), txtNumero.getText(), txtComplemento.getText(), txtBairro.getText(), selEstado.getSelectedItem(), txtCidade.getText(), codigoPessoa);	
+						CargosControl.salvarCargo(idCargos.get(selTipoFuncionario.getSelectedItem()), codigoPessoa);				
+					}
+					limparCampos();
+					cardLayout.show(getContentPane(), "pnlCadastros");
+					readJTable();	
+				}
+			}
+		});
 		btnSalvar.setFont(new Font("Arial", Font.PLAIN, 11));
 		
 		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				limparCampos();
+				cardLayout.show(getContentPane(), "pnlCadastros");
+			}
+		});
 		btnCancelar.setFont(new Font("Arial", Font.PLAIN, 11));
 		GroupLayout gl_pnlCadastrar = new GroupLayout(pnlCadastrar);
 		gl_pnlCadastrar.setHorizontalGroup(
@@ -230,7 +349,7 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		JPanel tabMedicos = new JPanel();
 		tabMedicos.setLayout(null);
 		tabMedicos.setBorder(null);
-		tabCadastrarMedicos.addTab("Médicos", null, tabMedicos, null);
+		tabCadastrarMedicos.addTab("Dados do Funcionário", null, tabMedicos, null);
 		
 		JLabel label = new JLabel("Nome:");
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -271,11 +390,17 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		label_3.setBounds(27, 103, 68, 14);
 		tabMedicos.add(label_3);
 		
-		JFormattedTextField txtDataNascimento = new JFormattedTextField();
+		try {
+			txtDataNascimento = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
 		txtDataNascimento.setBounds(102, 97, 174, 26);
 		tabMedicos.add(txtDataNascimento);
+		txtDataNascimento.setDocument(new JTextFieldLimit(10));
+		txtDataNascimento.setCaretPosition(0);
 		
-		Choice selEstadoCivil = new Choice();
+		selEstadoCivil = new Choice();
 		selEstadoCivil.setFont(new Font("Arial", Font.PLAIN, 12));
 		selEstadoCivil.setBounds(386, 99, 170, 21);
 		tabMedicos.add(selEstadoCivil);
@@ -286,7 +411,7 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		label_4.setBounds(313, 103, 61, 14);
 		tabMedicos.add(label_4);
 		
-		Choice selSexo = new Choice();
+		selSexo = new Choice();
 		selSexo.setFont(new Font("Arial", Font.PLAIN, 12));
 		selSexo.setBounds(104, 136, 170, 21);
 		tabMedicos.add(selSexo);
@@ -402,7 +527,7 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		label_15.setBounds(31, 407, 61, 14);
 		tabMedicos.add(label_15);
 		
-		Choice selEstado = new Choice();
+		selEstado = new Choice();
 		selEstado.setFont(new Font("Arial", Font.PLAIN, 12));
 		selEstado.setBounds(104, 404, 174, 21);
 		tabMedicos.add(selEstado);
@@ -434,7 +559,7 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		label_18.setBounds(10, 64, 82, 14);
 		tabInformacoesDoCargo.add(label_18);
 		
-		Choice selTipoFuncionario = new Choice();
+		selTipoFuncionario = new Choice();
 		selTipoFuncionario.setFont(new Font("Arial", Font.PLAIN, 12));
 		selTipoFuncionario.setBounds(104, 62, 169, 21);
 		tabInformacoesDoCargo.add(selTipoFuncionario);
@@ -493,40 +618,40 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		label_23.setBounds(344, 50, 113, 14);
 		tabCargaDeTrabalho.add(label_23);
 		
-		Checkbox checkbox = new Checkbox("Segunda-feira");
-		checkbox.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox.setBounds(34, 72, 95, 22);
-		tabCargaDeTrabalho.add(checkbox);
+		cbSegunda = new Checkbox("Segunda-feira");
+		cbSegunda.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbSegunda.setBounds(34, 72, 95, 22);
+		tabCargaDeTrabalho.add(cbSegunda);
 		
-		Checkbox checkbox_1 = new Checkbox("Ter\u00E7a-feira");
-		checkbox_1.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_1.setBounds(34, 103, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_1);
+		cbTerca = new Checkbox("Ter\u00E7a-feira");
+		cbTerca.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbTerca.setBounds(34, 103, 95, 22);
+		tabCargaDeTrabalho.add(cbTerca);
 		
-		Checkbox checkbox_2 = new Checkbox("Quarta-feira");
-		checkbox_2.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_2.setBounds(34, 133, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_2);
+		cbQuarta = new Checkbox("Quarta-feira");
+		cbQuarta.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbQuarta.setBounds(34, 133, 95, 22);
+		tabCargaDeTrabalho.add(cbQuarta);
 		
-		Checkbox checkbox_3 = new Checkbox("Quinta-feira");
-		checkbox_3.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_3.setBounds(34, 163, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_3);
+		cbQuinta = new Checkbox("Quinta-feira");
+		cbQuinta.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbQuinta.setBounds(34, 163, 95, 22);
+		tabCargaDeTrabalho.add(cbQuinta);
 		
-		Checkbox checkbox_4 = new Checkbox("Sexta-feira");
-		checkbox_4.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_4.setBounds(34, 191, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_4);
+		cbSexta = new Checkbox("Sexta-feira");
+		cbSexta.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbSexta.setBounds(34, 191, 95, 22);
+		tabCargaDeTrabalho.add(cbSexta);
 		
-		Checkbox checkbox_5 = new Checkbox("S\u00E1bado");
-		checkbox_5.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_5.setBounds(34, 222, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_5);
+		cbSabado = new Checkbox("S\u00E1bado");
+		cbSabado.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbSabado.setBounds(34, 222, 95, 22);
+		tabCargaDeTrabalho.add(cbSabado);
 		
-		Checkbox checkbox_6 = new Checkbox("Domingo");
-		checkbox_6.setFont(new Font("Arial", Font.PLAIN, 12));
-		checkbox_6.setBounds(34, 253, 95, 22);
-		tabCargaDeTrabalho.add(checkbox_6);
+		cbDomingo = new Checkbox("Domingo");
+		cbDomingo.setFont(new Font("Arial", Font.PLAIN, 12));
+		cbDomingo.setBounds(34, 253, 95, 22);
+		tabCargaDeTrabalho.add(cbDomingo);
 		
 		txtHoraEntrada1 = new JTextField();
 		txtHoraEntrada1.setColumns(10);
@@ -597,6 +722,15 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		txtHoraEntrada7.setColumns(10);
 		txtHoraEntrada7.setBounds(191, 251, 86, 26);
 		tabCargaDeTrabalho.add(txtHoraEntrada7);
+		btnNovo.setIcon(new ImageIcon(this.getClass().getResource("/add.png")));
+		btnNovo.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnNovo.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnEditar.setIcon(new ImageIcon(this.getClass().getResource("/page_edit.png")));
+		btnRemover.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnRemover.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnRemover.setIcon(new ImageIcon(this.getClass().getResource("/delete.png")));
+		btnRemover.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnRemover.setHorizontalTextPosition(SwingConstants.CENTER);
 		
 		/* Add selects
 		 * 
@@ -644,11 +778,8 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		selEstado.add("Sergipe (SE)");
 		selEstado.add("Tocantins (TO");
 		
-		selTipoFuncionario.add("Selecione o tipo");
-		selTipoFuncionario.add("Gerente");
-		selTipoFuncionario.add("Médico");
-		selTipoFuncionario.add("Recpcionista");
-		
+		readCargos();		
+				
 		listEspecialidade.add(new Choice());
 		listEspecialidade.get(0).setBounds(104, listEspecialidadeY, 416, 20);
 		popSelectEspecialidades(listEspecialidade.get(0));	
@@ -696,7 +827,7 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 					lbEspecialidades.setVisible(true);
 					listEspecialidade.get(0).setVisible(true);
 					btnAddEspecialidade.setVisible(true);
-					btnRemEspecialidade.setVisible(true);
+					btnRemEspecialidade.setVisible(false);
 				} else {
 					lbCrm.setVisible(false);
 					txtCrm.setVisible(false);
@@ -707,6 +838,23 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 				}
 			}
 		});
+		
+		DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+		modelo.addColumn("ID");
+		modelo.addColumn("Nome");
+		modelo.addColumn("Data de Nascimento");
+		modelo.addColumn("RG");
+		modelo.addColumn("CPF");
+		modelo.addColumn("Tipo Funcionário");
+		TableColumn col = table.getColumnModel().getColumn(0);
+	    col.setMinWidth(60);
+	    col.setMaxWidth(60);
+	    col.setPreferredWidth(60);
+		
+		/*
+		 * table
+		 */
+		readJTable();
 		
 		/* 
 		 * Images
@@ -720,14 +868,45 @@ public class ViewCadastrosFuncionarios extends JInternalFrame {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(384, 24, 174, 26);
 		tabInformacoesDoCargo.add(txtPassword);
+		
+		//temp
+		//cardLayout.show(getContentPane(), "pnlCadastrar");
 	}
 	
 	private void popSelectEspecialidades(Choice c) {
-		c.add("Selecione a Especialdidade");
+		c.add("Selecione o tipo");
+		ArrayList<String[]> especialidades = EspecialidadeMedicaControl.listarEspecialidades();
+		for(int i = 0; i < especialidades.size(); i++) {
+			idEspecialidadeMedica.put(especialidades.get(i)[1], Integer.parseInt(especialidades.get(i)[0]));
+			c.add(especialidades.get(i)[1]);
+		}
+		/*c.add("Selecione a Especialidade");
 		c.add("Cardiologista");
 		c.add("Clinico geral");
 		c.add("Geriatra");
 		c.add("Reumatologista");
-		c.add("Urologista");
+		c.add("Urologista");*/
+	}
+	
+	class JTextFieldLimit extends PlainDocument {
+		private int limit;
+		JTextFieldLimit(int limit) {
+			super();
+		    this.limit = limit;
+		}
+
+		JTextFieldLimit(int limit, boolean upper) {
+			super();
+		    this.limit = limit;
+		}
+
+		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+			if (str == null)
+				return;
+
+		    if ((getLength() + str.length()) <= limit) {
+		    	super.insertString(offset, str, attr);
+		    }
+		}
 	}
 }

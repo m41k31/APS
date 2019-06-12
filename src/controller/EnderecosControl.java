@@ -11,10 +11,10 @@ import modelDAO.PessoaDAO;;
 
 public class EnderecosControl {
 	
-	public static int salvarEndereco(String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade) {
-		Enderecos o = new Enderecos(cep, rua, numero, complemento, bairro, estado, cidade);
+	public static void salvarEndereco(String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade, int codigoPessoa) {
+		Enderecos endereco = new Enderecos(cep, rua, numero, complemento, bairro, estado, cidade, codigoPessoa);
 		EnderecosDAO dao = new EnderecosDAO();
-		return dao.create(o);
+		dao.create(endereco);
 	}
 	
 	public static ArrayList<String[]> resgatarPessoas() {
@@ -30,10 +30,10 @@ public class EnderecosControl {
 		return enderecos;		
 	}
 	
-	public static void updateEndereco(int codigoEndereco, String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade) {
-		Enderecos enderecos = new Enderecos(codigoEndereco, cep, rua, numero, complemento, bairro, estado, cidade);
+	public static void updateEndereco(String cep, String rua, String numero, String complemento, String bairro, String estado, String cidade, int codigoPessoa) {
+		Enderecos endereco = new Enderecos(cep, rua, numero, complemento, bairro, estado, cidade, codigoPessoa);
 		EnderecosDAO enderecoDAO = new EnderecosDAO();
-		enderecoDAO.update(enderecos);
+		enderecoDAO.update(endereco);
 	}
 	
 }

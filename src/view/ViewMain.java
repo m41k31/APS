@@ -1,41 +1,22 @@
 package view;
 
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.SystemColor;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-
-import org.eclipse.swt.widgets.Display;
-
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URL;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
-import javax.swing.JRadioButton;
-import javax.swing.JLayeredPane;
-import javax.swing.JInternalFrame;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 public class ViewMain extends JDesktopPane {
 
@@ -168,32 +149,12 @@ public class ViewMain extends JDesktopPane {
 		JMenu mnNewMenu_2 = new JMenu("Atendimento");
 		menuBar.add(mnNewMenu_2);
 		
-		JMenu mnRelatrios = new JMenu("Relat\u00F3rios");
-		menuBar.add(mnRelatrios);
-		
-		JMenu mnConfiguraes = new JMenu("Configura\u00E7\u00F5es");
-		menuBar.add(mnConfiguraes);
-		
-		JMenu mnAjuda = new JMenu("Ajuda");
-		menuBar.add(mnAjuda);
-		
 		/*
 		 * Icons menu
 		 */
 		mnCadastros_Pacientes.setIcon(new ImageIcon(this.getClass().getResource("/group.png")));
 		mnCadastros_profissionaisMedicos.setIcon(new ImageIcon(this.getClass().getResource("/status_offline.png")));
 		mnCadastros_usuariosPermissoesAcesso.setIcon(new ImageIcon(this.getClass().getResource("/user_green.png")));
-		
-		//
-		
-		/*ViewCadastrosPacientes viewCadastrosPacientes = new ViewCadastrosPacientes();
-		desktopPane.add(viewCadastrosPacientes);
-		viewCadastrosPacientes.setVisible(true);
-		BasicInternalFrameUI ui = (BasicInternalFrameUI) viewCadastrosPacientes.getUI(); 
-		Container norte = (Container) ui.getNorthPane(); 
-		norte.remove (0); 
-		norte.validate (); 
-		norte.repaint ();*/
 	}
 
 }
